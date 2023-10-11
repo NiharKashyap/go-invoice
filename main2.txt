@@ -1,0 +1,64 @@
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+
+	"github.com/gin-gonic/gin"
+)
+
+func HomePage(c *gin.Context) {
+	c.JSON(200,
+		gin.H{
+			"message": "Hellow World",
+		})
+}
+
+func HomePagePOST(c *gin.Context) {
+
+	body := c.Request.Body
+
+	value, err := ioutil.ReadAll(body)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	c.JSON(200,
+		gin.H{
+			"message": string(value),
+		})
+}
+
+func getQuery(c *gin.Context) {
+	name := c.Query("name")
+	age := c.Query("age")
+
+	c.JSON(200,
+		gin.H{
+			"name": name,
+			"age":  age,
+		})
+}
+
+func getParam(c *gin.Context) {
+	name := c.Param("name")
+	age := c.Param("age")
+
+	c.JSON(200,
+		gin.H{
+			"name": name,
+			"age":  age,
+		})
+}
+
+func main() {
+	fmt.Println("Hellow world")
+
+	r := gin.Default()
+	r.GET("/", HomePage)
+	r.POST("/", HomePagePOST)
+	r.GET("/query", getQuery)           // query?name=&age=
+	r.GET("/path/:name/:age", getParam) // path/name/age
+	r.Run()
+}
